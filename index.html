@@ -3,8 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="我的记账本">
 <title>我的记账本</title>
+
+<!-- 浏览器标签页图标 -->
+<link rel="icon" type="image/png" href="favicon.png">
+<!-- iOS 主屏幕 App 图标 -->
+<link rel="apple-touch-icon" href="app-icon.png">
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   * {
@@ -601,7 +609,8 @@
     align-items: center;
   }
 
-  .setting-right .glass-input {
+  .setting-right .glass-input,
+  .setting-right .glass-select {
     width: 160px;
   }
 
@@ -690,6 +699,7 @@
 
   .hidden { display: none !important; }
 
+  /* ========== 移动端适配修复 ========== */
   @media (max-width: 768px) {
     .overview-grid { grid-template-columns: repeat(2, 1fr); }
     .dashboard-wrap { grid-template-columns: 1fr; }
@@ -698,9 +708,16 @@
     .filter-bar { grid-template-columns: 1fr 1fr; }
     .filter-bar .divider-text { display: none; }
     .chart-grid { grid-template-columns: 1fr; }
+
     .setting-row { flex-direction: column; align-items: flex-start; }
     .setting-right { width: 100%; }
-    .setting-right .glass-input { flex: 1; width: auto; }
+    /* 修复：下拉框和输入框一起自适应宽度 */
+    .setting-right .glass-input,
+    .setting-right .glass-select {
+      flex: 1;
+      width: auto;
+      min-width: 0;
+    }
   }
 </style>
 </head>
@@ -1127,7 +1144,6 @@
         el.innerText = el.dataset.value;
       }
     });
-    // 更新全局按钮图标
     document.querySelector('[title="一键切换金额显示"]').innerText = allPrivacyHidden ? '👁️' : '🙈';
   }
 
@@ -1541,13 +1557,11 @@
     const holy = Object.values(getData('holyAccounts')).reduce((s, a) => s + a.current, 0);
     const totalAsset = balance + savings + investments + holy;
 
-    // 更新数据属性
     document.getElementById('monthIncome').dataset.value = income.toFixed(2);
     document.getElementById('monthExpense').dataset.value = expense.toFixed(2);
     document.getElementById('monthBalance').dataset.value = balance.toFixed(2);
     document.getElementById('totalAsset').dataset.value = totalAsset.toFixed(2);
 
-    // 只有非隐藏状态才更新显示文本
     if (!allPrivacyHidden) {
       document.getElementById('monthIncome').innerText = income.toFixed(2);
       document.getElementById('monthExpense').innerText = expense.toFixed(2);
